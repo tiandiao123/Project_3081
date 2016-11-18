@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+
+
+<html>
+<head>
+    <meta charset = "utf-8">
+    <title> libphoto - Tutorial - Adding a filter </title>
+    <link class = "page" rel="stylesheet" type="text/css" href="../css/stylesheet.css">
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+</head>
+<body>
+
+
+    <div class="content">
+        <nav>
+            <a href="../index.html" class = "page">Home</a> |
+            <a href="../users/index.html" class = "page">Users</a> |
+            <a href="index.html" class = "page">Developers</a>
+        </nav>
+    </div>
+
+    <div class = "content">
+        <h1>Adding a filter</h1>
+
+        <p>Adding a filter requires several more steps than adding a tool since the creation of filters and handling of filter application is done within libphoto rather than in applications. However, these steps are relatively simplistic and well defined.</p>
+
+        <p>First, the filter type must be determined. Currently, libphoto contains three filter types each defined by a class:</p>
+
+        <ul>
+            <li>PositionIndependentFilter: apply a simple function to each pixel of an image independently.</li>
+            <li>ConvolutionBasedFilter: uses a mask of values centered on the current pixel being edited corresponding to the influence of surrounding pixels on the new value of the center pixel</li>
+            <li>ImageMaskBasedFilter: applies a mask to an entire image by multiplying each pixel by a value (0 to 1) defined in a corresponding coordinate array</li>
+        </ul>
+
+        <p>Each of these classes inherit a parent class Filter that defines a single purely virtual function apply which takes a pointer to the current PixelBuffer and an array of float arguments. Each subclass takes a function pointer in the constructor, this is not required, but is an effective way to reduce repetitive code and overhead within each class and allow easy outside access to some of the inner functions used by specific filters. (if this does not make sense, the examples will help)</p>
+
+        <p>The entirity of the PositionIndependentFilter class can be conveyed by its header definition and the apply function. The constructor simply sets the innerFun member variable to fptr. </p>
+        <pre class="prettyprint">
+class PositionIndependentFilter : public Filter
+{
+public:
+    PositionIndependentFilter(void (*fptr)(ColorData*, float*)); ///< Constructor requires a pointer to the function to apply to each pixel given args
+    ~PositionIndependentFilter();
+
+    void (*innerFun)(ColorData*, float*); ///< Internal storage of the function pointer
+
+    void apply(PixelBuffer* buf, float *args); ///< Uses nested loops to iterate over the PixelBuffer, applying the innerFunction at each pixel ColorData
+};
+
+void PositionIndependentFilter::apply(PixelBuffer* buf, float *args) {
+    for (int i = 0; i < buf->getWidth(); ++i)
+    {
+        for (int j = 0; j < buf->getHeight(); ++j)
+        {
+            ColorData pix = buf->getPixel(i, j);
+            innerFun(&pix, args);
+            buf->setPixel(i, j, pix.clampedColor());
+        }
+    }
+}
+        </pre>
+
+        <p>The apply function iterates over all the pixels in the buffer, updating them to the 'filtered' value. Notice that there is no need to determine which filter is being applied here, the class blindly calls inner function assuming it will edit the pixel as required. The class clamps the pixel values before updating them in case the inner function exceeds the bounds defined in ColorData and that is the extent of this class.</p>
+
+        <p>Obviously, much of the work is being done elsewhere. The functions being passed into this class are defined in a namespace PixelFilterAlgorithm. It is highly recommended that inner functions for any/all of the Filter sub-classes are static and contained within a namespace. Below, the sepiaPixel function is shown.</p>
+
+        <pre class="prettyprint">
+static void sepiaPixel(ColorData *pixel, float *args) {
+    pixel->setRed((pixel->getRed() * .393) + (pixel->getGreen() *.769) + (pixel->getBlue() * .189));
+    pixel->setGreen((pixel->getRed() * .349) + (pixel->getGreen() *.686) + (pixel->getBlue() * .168));
+    pixel->setBlue((pixel->getRed() * .272) + (pixel->getGreen() *.534) + (pixel->getBlue() * .131));
+}
+        </pre>
+
+        <p>Each color channel is modified according to predefined values, none of the arguments are used as none are given. Another example is shown below adjusting RGB channels by corresponding values given in arguments. The apply function for a filter with this inner function should never be called with an incorrect number of arguments (or the check should be done before this point) because it assumes it is receiving the required values.</p>
+
+        <pre class="prettyprint">
+static void adjustPixelRGB(ColorData *pixel, float *args) {
+    float rf = args[0];
+    float gf = args[1];
+    float bf = args[2];
+    pixel->setGreen(pixel->getGreen() * gf);
+    pixel->setRed(pixel->getRed() * rf);
+    pixel->setBlue(pixel->getBlue() * bf);
+}
+        </pre>
+
+        <p>Although the definition for ConvolutionBasedFilter is nearly identical to the one we just looked at, it uses its inner function (filterGen) very differently. It passes an integer filterSize (by ref) and arguments for generation and expects a 2D array of doubles of size filterSize (by filterSize) in return. This filter array is the only unique part of the convolution algorithm which proceeds with deeply nested for loops regardless of the filter type.</p>
+
+        <pre class="prettyprint">
+void ConvolutionBasedFilter::apply(PixelBuffer* buf, float *args) {
+    // Initialization
+    int dspHeight = buf->getHeight();
+    int dspWidth = buf->getWidth();
+    int filterSize;
+    double **filter = filterGen(filterSize, args);
+    // Use a copy for reading so changes don't affect convolution
+    PixelBuffer *image = new PixelBuffer(dspWidth, dspHeight, buf->getBackgroundColor());
+    PixelBuffer::copyPixelBuffer(buf, image);
+    // Application of filter kernel
+    // Code modified from http://lodev.org/cgtutor/filtering.html
+    for (int x = 0; x < dspWidth; x++) {
+    for (int y = 0; y < dspHeight; y++) {
+        ColorData *newPixel = new ColorData(0, 0, 0);
+        // Build new pixel using surrounding pixels prescribed in kernel
+        for (int filterY = 0; filterY < filterSize; ++filterY) {
+        for (int filterX = 0; filterX < filterSize; ++filterX) {
+            // Wrap around image edges
+            int imageX = (x - filterSize / 2 + filterX + dspWidth) % dspWidth;
+            int imageY = (y - filterSize / 2 + filterY + dspHeight) % dspHeight;
+            *newPixel = *newPixel + (image->getPixel(imageX, imageY) * filter[filterY][filterX]);
+        }
+        }
+        // Update original buffer
+        buf->setPixel(x, y, newPixel->clampedColor());
+        delete newPixel;
+    }
+    }
+    for (int i = 0; i < filterSize; i++)
+        delete[] filter[i];
+    delete[] filter;
+}       </pre>
+
+        <p>Clearly, convolution is a more complex operation to apply to the image. The functions used to generate the filter array are subsequently more complex and require a helper class to reduce complexity and redundancies. This helper class (KernelFilter) and the functions are defined in the namespace KernelFilterAlgorithm. The filter generation function for the blur and edge detection filtesr is shown below to give a general idea of how the helper class is used and how the functions can be written. Blurring dynamically builds an array while edge detection returns a fixed size array.</p>
+
+        <pre class="prettyprint">
+/// Creates a kernel filter that blurs an image
+    /** Filter has general cross shape form additive to 1
+          0.0, 0.2,  0.0,
+          0.2, 0.2,  0.2,
+          0.0, 0.2,  0.0
+     Larger filters apply more blur */
+static double** kernelBlur(int &size, float *args) {
+    KernelFilter kernel;
+    kernel.setSize(args[0]/2+2); // Larger size is more blur so the size is determined using the argument
+    size = kernel.getSize();
+    int **filter = kernel.getFilter();
+    for (int i = 0; i < size; ++i) {
+    for (int j = 0; j < size; ++j) {
+        // Build filter edges...
+        if ((i == 0 && j != size / 2) || (i == size - 1 && j != size / 2) ||
+            (j == 0 && i != size / 2) || (j == size - 1 && i != size /2))
+            filter[i][j] = 0;
+        else
+            filter[i][j] = 1;
+    }
+    }
+    kernel.updateZeroBrightnessFactor();
+    return kernel.factoredFilter();
+}
+
+static double** kernelEdgeDetection(int &size, float *args) {
+    std::cout << "kernelEdgeDetection algorithm called";
+    KernelFilter kernel;
+    kernel.setSize(3);
+    size = kernel.getSize();
+    kernel.getFilter()[0][1] = -1;
+    kernel.getFilter()[1][1] = -1;
+    kernel.getFilter()[2][1] = 2;
+    return kernel.factoredFilter();
+}
+    </pre>
+
+    <p>After determining which filter type the new filter uses and a function has been placed in the relevant namespace (or a new filter type and namespace have been created), the filter may be used directly by creating an instance of the class or through the included filter handler.</p>
+
+    <p>If FilterHandler is used, several values in FilterHandler.h and FilterHandler.cpp must be updated. First, add a name for the filter to the FilterType enumeration, then iterate the FILTER_COUNT. Then examine the for loop in the constructor and create an instantiation of the Filter subclass with a pointer to the relevant function.</p>
+    <pre class="prettyprint">
+#ifndef FILTER_COUNT
+#define FILTER_COUNT 10
+#endif
+
+enum FilterType {
+    BLUR,
+    MOTIONBLUR,
+    QUANTIZE,
+    THRESHOLD,
+    SATURATION,
+    RGB,
+    EDGEDETECTION,
+    SHARPEN,
+    SEPIA,
+    VIGNETTE
+};
+    </pre>
+    <pre class="prettyprint">
+for (int i = 0; i < FILTER_COUNT; ++i)
+{
+    switch (i) {
+        case BLUR:
+            filters[i] = dynamic_cast<Filter*> (new ConvolutionBasedFilter(&KernelFilterAlgorithm::kernelBlur));
+            break;
+        case MOTIONBLUR:
+            filters[i] = dynamic_cast<Filter*> (new ConvolutionBasedFilter(&KernelFilterAlgorithm::kernelMotionBlur));
+            break;
+        case QUANTIZE:
+            filters[i] = dynamic_cast<Filter*> (new PositionIndependentFilter(&PixelFilterAlgorithm::quantizePixel));
+            break;
+        case THRESHOLD:
+            filters[i] = dynamic_cast<Filter*> (new PositionIndependentFilter(&PixelFilterAlgorithm::adjustPixelToThreshold));
+            break;
+       case VIGNETTE:
+           filters[i] = dynamic_cast<Filter*> (new ImageMaskBasedFilter(&ImageMaskAlgorithm::vignetteMask));
+           break;
+    ...
+    </pre>
+
+    <p>Using an instance of the FilterHandler class, a single apply function can be called given the PixelBuffer to be modified, the enum value of the Filter instance to use, and arguments supplied by the user as shown below in the excerpt from FlashPhoto.</p>
+
+    <pre class="prettyprint">
+void FlashPhotoApp::applyFilterChannel()
+{
+    float args[3] =
+    {
+        m_filterParameters.channel_colorRed,
+        m_filterParameters.channel_colorGreen,
+        m_filterParameters.channel_colorBlue
+    };
+    m_filterHandle->apply(m_displayBuffer, RGB, args);
+    storeCanvasState();
+}
+    </pre>
+
+    </div>
+
+    <div class = "footer">
+        <span class="copyright">&copy; 2015, CSCI 3081</span>
+    </div>
+
+
+</body>
+</html>

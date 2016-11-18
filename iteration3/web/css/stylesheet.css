@@ -1,0 +1,60 @@
+
+
+body {
+	background: DarkSeaGreen;
+	font-size: 1em;
+	font-family: sans-serif; 
+}
+
+h1 {
+	text-align: center;
+	margin-top: 0em; /*To keep consistent spacing around the inside of the boxes*/
+}
+
+/* Something I learned from the internet for not letting 
+	floating elements expand beyond the div*/
+.content:before,
+.content:after {
+    content:"";
+    display:table;
+}
+.content:after {
+    clear:both;
+}
+
+/* Formatting for content bubbles */
+.content, .footer {
+	margin: 0 auto;
+	margin-top: 2em;
+	width: 75%;
+	border-radius: 1em;
+	background: white;
+	padding: 2em;
+}
+
+.footer {
+	text-align: center;
+	margin-top: 2em;
+	padding: 1em;
+	margin-bottom: 2em;
+}
+
+/* floating picture for home page  */
+#example-pic {
+	float:right;
+	padding-left:2em;
+	padding-bottom:2em; 
+	width: 10em;
+
+}
+
+/* All links that I want bolded */
+.link, nav *{
+	font-size: 1em; 
+	font-weight: bold; 
+	color: black; 
+}
+
+.copyright {
+	font-style:italic;
+}

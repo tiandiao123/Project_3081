@@ -1,0 +1,95 @@
+<html>
+    <head>
+        <title></title>
+    </head>
+    <body>
+        <div>
+            <code>void Tool::fillGap(int new_x, int new_y, PixelBuffer* buf, ColorData fg) {</code></div>
+        <div>
+            <code>// This function is used to fill gaps between applications of the tool</code></div>
+        <div>
+            &nbsp;</div>
+        <div>
+            <code>&nbsp; &nbsp; // Tool is starting to apply, no gap to fill</code></div>
+        <div>
+            <code>&nbsp; &nbsp; if(!m_tool_applying) {</code></div>
+        <div>
+            <code>&nbsp; &nbsp; &nbsp; &nbsp; // Update previous x,y</code></div>
+        <div>
+            <code>&nbsp; &nbsp; &nbsp; &nbsp; m_drag_prev_x = new_x;</code></div>
+        <div>
+            <code>&nbsp; &nbsp; &nbsp; &nbsp; m_drag_prev_y = new_y;</code></div>
+        <div>
+            <code>&nbsp; &nbsp; &nbsp; &nbsp; return;</code></div>
+        <div>
+            <code>&nbsp; &nbsp; }</code></div>
+        <div>
+            <code>&nbsp; &nbsp;&nbsp;</code></div>
+        <div>
+            <code>&nbsp; &nbsp; // Distance between new x,y and old x,y</code></div>
+        <div>
+            <code>&nbsp; &nbsp; float x_distance = (float) new_x - (float) m_drag_prev_x;</code></div>
+        <div>
+            <code>&nbsp; &nbsp; float y_distance = (float) new_y - (float) m_drag_prev_y;</code></div>
+        <div>
+            <code>&nbsp; &nbsp; // Distance between new point and old point</code></div>
+        <div>
+            <code>&nbsp; &nbsp; float distance = sqrt((x_distance*x_distance) + (y_distance*y_distance));</code></div>
+        <div>
+            <code>&nbsp; &nbsp; // Multiplier for stepping through the for loop that fills the gap</code></div>
+        <div>
+            <code>&nbsp; &nbsp; float step = 1 / (distance / m_size) / 2;</code></div>
+        <div>
+            &nbsp;</div>
+        <div>
+            <code>&nbsp; &nbsp; // x,y coordinates with which to call apply</code></div>
+        <div>
+            <code>&nbsp; &nbsp; int x_apply, y_apply;</code></div>
+        <div>
+            <code>&nbsp; &nbsp; // Apply at each step</code></div>
+        <div>
+            <code>&nbsp; &nbsp; for(float i=0.0;i&lt;1.0;i+=step) {</code></div>
+        <div>
+            <code>&nbsp; &nbsp; &nbsp; &nbsp; x_apply = floor(i*(x_distance)) + m_drag_prev_x;</code></div>
+        <div>
+            <code>&nbsp; &nbsp; &nbsp; &nbsp; y_apply = floor(i*(y_distance)) + m_drag_prev_y;</code></div>
+        <div>
+            <code>&nbsp; &nbsp; &nbsp; &nbsp; apply(x_apply, y_apply, buf, fg);</code></div>
+        <div>
+            <code>&nbsp; &nbsp; }</code></div>
+        <div>
+            &nbsp;</div>
+        <div>
+            <code>&nbsp; &nbsp; // Set previous x,y to current x,y</code></div>
+        <div>
+            <code>&nbsp; &nbsp; m_drag_prev_x = new_x;</code></div>
+        <div>
+            <code>&nbsp; &nbsp; m_drag_prev_y = new_y;</code></div>
+        <div>
+            <code>}</code></div>
+        <div>
+            &nbsp;</div>
+        <div>
+            <p>
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;The purpose of the <code>fillGap()</code> function in the Tool class is to interpolate between the points drawn by BrushWorkApp. In BrushWorkApp, when the mouse is dragged it calls the <code>apply()</code> function to apply the tool to the canvas, but due to the limitations of the GUI library used by BrushWorkApp, this leaves gaps in the drawing when the tool is moved too fast. As such, <code>fillGap()</code> was written to fill in these gaps so that tool application is closer to continuous. BrushWorkApp calls <code>fillGap()</code> each time the mouse is dragged, and <code>fillGap()</code> interpolates if necessary.</p>
+            <p>
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;Since <code>fillGap() </code>calls <code>apply()</code>, it is necessary for BrushWorkApp to pass in the <code>PixelBuffer</code> and <code>ColorData</code> for <code>fillGap() </code>to used when it calls <code>apply()</code>.&nbsp;<span style="font-family: monospace;">fillGap()</span>&nbsp;also takes as arguments the x and y coordinates of the point to which the mouse is dragged (<code>new_x</code> and <code>new_y</code>). With these coordinates and the coordinates of the previous mouse position (<code>m_drag_prev_x</code> and <code>m_drag_prev_y</code>), the interpolation can be performed.</p>
+            <p>
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;The Boolean variable<code> m_tool_applying</code> is used so that the tool only interpolates if the mouse is being dragged; if the mouse is being pressed for the first time, there is no interpolation to perform, so instead&nbsp;<span style="font-family: monospace;">fillGap()</span>&nbsp;will set the previous mouse coordinates to be used the next time&nbsp;<span style="font-family: monospace;">fillGap()</span>&nbsp;is called. In BrushWorkApp, when <code>leftMouseDown()</code> is called, <code>m_tool_applying</code> is set to <code>1</code>; when <code>leftMouseUp()</code> is called, <code>m_tool_applying</code> is set to <code>0</code>.</p>
+            <p>
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;To calculate the amount of calls to <code>apply()</code> that are needed to interpolate sufficiently, the distances between the old and new x,y are calculated (<code>x_distance</code> and <code>y_distance</code>); the actual distance between the two points is then calculated and stored in the variable <code>distance</code>. Finally the amount of calls to <code>apply()</code> is determined by taking the ratio of the distance between the points and the size of the tool; the reciprocal of this number is then taken to get an approximation for the size of each step taken to interpolate. It should be noted that the step size is then divided by two to increase the amount of steps, which improves the smoothness of interpolation.</p>
+            <p>
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;With the new and old x,y coordinates and the step size on hand, a for loop is used to calculate the points of interpolation and apply the tool to the canvas at each of these points. For each point, the x and y coordinates are calculated according to the general formulae:</p>
+            <p>
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;x_new = &lambda;(x_new-x_old)+x_old</p>
+            <p>
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;y_new = &lambda;(y_new-y_old)+y_old</p>
+            <p>
+                where 0 &le; &lambda; &le; 1. This formula works by iterating through the points along the line between the old and new point and calling <code>apply()</code> at each step of the loop. Note here that the floor of the x,y coordinates is taken to ensure that the coordinates are integers. Finally, when <code>fillGap()</code> is done with interpolation, it sets the previous x,y coordinates to the current x,y coordinates so they can be used the next time <code>fillGap()</code> is called.</p>
+            <p>
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;For each value that is calculated in this function, a comment is given to explicitly indicate the purpose of the value so that there is no ambiguity. These comments are particularly useful in this function since there are a number of different x,y values that could be confused. Moreover, large calculations are broken up into smaller calculations so that lines are not long, unwieldy, and difficult to read; this also makes the logic of the calculations easier to understand since they are broken up into logical sub-calculations.</p>
+        </div>
+        <p>
+            &nbsp;</p>
+    </body>
+</html>

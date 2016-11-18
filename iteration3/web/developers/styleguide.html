@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+
+
+<html>
+<head>
+    <meta charset = "utf-8">
+    <title> libphoto - Developer Style Guide </title>
+    <link class = "page" rel="stylesheet" type="text/css" href="../css/stylesheet.css">
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+
+</head>
+<body>
+
+
+    <div class="content">
+        <nav>
+            <a href="../index.html" class = "page">Home</a> |
+            <a href="../users/index.html" class = "page">Users</a> |
+            <a href="index.html" class = "page">Developers</a>
+        </nav>
+    </div>
+
+    <div class = "content">
+        <h1>Code Style Guidelines</h1>
+        <h3>Arithmetic operaters should be spaced to increase clarity but can be left close together if it makes order of operations clearer</h3>
+        <pre class="prettyprint">
+// Well spaced for readability
+if (i + j == (size - 1)) filter[i][j] = 1;
+ColorData(a.m_red + b.m_red, a.m_green + b.m_green, a.m_blue + b.m_blue, a.m_alpha + b.m_alpha);
+val = m_settings.coeff[2] * dist_cent * dist_cent + m_settings.coeff[1] * dist_cent + m_settings.coeff[0];
+// Multiplication operator left tight to m_size to make division first clear
+int app_x = x - (m_size)/2;
+int app_y = y + (m_size)/2;
+        </pre>
+
+        <h3>Minimization of depth is preferred, move extensive nesting into helper functions</h3>
+        <h3>Avoid reptitive code that could be moved into a function</h3>
+        <h3>Code should be documented where necessary but variables names should be chosen to reduce need for documentation</h3>
+        <h3>Commented out sections of code should have an explaination for their removal and continued presence</h3>
+        <pre class="prettyprint">
+/* A possible addition to speed up filter retreival time instead of generating the filter each time */
+// class KernelFilterCache
+// {
+// public:
+//     KernelFilterCache();
+//     ~KernelFilterCache();
+
+//     int hashFilter(int size, float *args, int arg_len, int kern_type);
+//     int saveFilter(KernelFilter kernel);
+//     KernelFilter getFilter(int hash);
+
+// private:
+//     KernelFilter[] cache;
+// };
+        </pre>
+        <h3>Debugging output should be removed from library functions</h3>
+        <h3>Dependencies should be minimized to what is used in the file</h3>
+        <pre class="prettyprint">Mask does not depend on any other parts of the library</pre>
+        <h3>Classes should have their own file unless they are small enough that adding a new file would decrease readability</h3>
+        <pre class="prettyprint">Tool classes are quite small and are left in the same file, but will likely be split off if many more tool types are added</pre>
+        <h3>Indentation size should be 4 and use spaces</h3>
+        <h3>Class inheritance should be used preferentially especially in cases where a parent class already exists</h3>
+        <h3>Constants should be defined prior to use</h3>
+        <h3>Static functions should be placed in a properly named namespace</h3>
+        <h3>Class names should be descriptive and have capital lettering consistent with the rest of the library</h3>
+        <h3>Allocated memory should be deleted. Functions that allocate memory and do not delete it should have a comment alerting the user that they must cleanup the memory</h3>
+        <h3>Source files should be placed in the src folder</h3>
+        <h3>Header files should be used for all cpp files, but the implementation of functions inline in header files should be avoided</h3>
+        <h3>Code documentation is used to generate html docs for the library. Follow Doxygen comment standards for all major classes and functions</h3>
+    </div>
+
+    <div class = "footer">
+        <span class="copyright">&copy; 2015, CSCI 3081</span>
+    </div>
+
+
+</body>
+</html>

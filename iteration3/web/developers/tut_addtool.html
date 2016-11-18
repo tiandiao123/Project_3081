@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+
+
+<html>
+<head>
+    <meta charset = "utf-8">
+    <title> libphoto - Tutorial - Adding a tool type </title>
+    <link class = "page" rel="stylesheet" type="text/css" href="../css/stylesheet.css">
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+
+</head>
+<body>
+
+
+    <div class="content">
+        <nav>
+            <a href="../index.html" class = "page">Home</a> |
+            <a href="../users/index.html" class = "page">Users</a> |
+            <a href="index.html" class = "page">Developers</a>
+        </nav>
+    </div>
+
+    <div class = "content">
+        <h1>Adding a tool type</h1>
+
+        <p>To add radically different tool types, the Tool class can be extended with an overidden apply function.</p>
+
+        <p>For this example, we will walk through the creation of a tool that replicates pixels from a position X left and Y down from where it is applied. Below, the header of a child class SampleBasedTool is shown.</p>
+
+        <pre class="prettyprint">
+class SampleBasedTool : public Tool
+{
+public:
+    SampleBasedTool();
+    SampleBasedTool(int size, int x_off, int y_off, float blend_per, int blend_mode); ///< This constructor takes as input the size of the sample area, the x,y offset, and the blend settings
+    ~SampleBasedTool();
+    void apply(int x, int y, PixelBuffer* buf, ColorData fg); ///< Applies the sample to the specified x,y coordinates of the PixelBuffer
+    int m_xoffset;
+    int m_yoffset;
+    float m_blend_opac;
+};
+        </pre>
+
+        <p>The generic Tool constructor doesn't take any arguments, so new tools classes do not have to do any work regarding the parent class. The only requirement is that an apply function exists given the current PixelBuffer, coordinates of application, and a foreground color. None of these values must be used, but if PixelBuffer is left unchanged, the Tool will have no effect. The apply function for SampleBasedTool is shown below and follows a basic template seen in most of the tool applications</p>
+
+        <pre class="prettyprint">
+void SampleBasedTool::apply(int x, int y, PixelBuffer* buf, ColorData fg) {
+    // Find the top left corner of application and loop
+    int app_x = x - (m_size)/2;
+    int app_y = y + (m_size)/2;
+    for (int i = 0; i < m_size; i++)
+    {
+        for (int j = 0; j < m_size; j++)
+        {
+            // Find the real coordinates, fixing y inversion
+            int x = app_x + i;
+            int y = buf->getHeight() - app_y + j;
+            // Sample from the offset
+            int x_off, y_off;
+            x_off = x + m_xoffset;
+            y_off = y + m_yoffset;
+            // Update pixel if applicable
+            if (checkBounds(x_off, y_off, buf) && checkBounds(x, y, buf)) {
+                ColorData col_new = blendColor(buf->getPixel(i, j), buf->getPixel(x_off, y_off), m_blend_opac, PHOTONFLUXBLEND);
+                buf->setPixel(x, y, col_new);
+            }
+        }
+    }
+}
+        </pre>
+
+        <p>The application of the tool is done from top left to bottom right to simplify the loop. First, the top left corner is found as app_x and app_y. Then the loop begins and the coordinates to apply to (x and y) are found by adding i and j to the top left corner. Due to GLUI y inversion, the height of the buffer is used to get the real y coordinate. Specific to the sample based tool, the pixel at the specified offset is found. Then the values are checked, using a helper function in Tool, ensuring none of the values exceed the dimensions of the buffer. A new color for the pixel is generated using blendColor (another Tool helper function for children) then assigned to the proper position in the PixelBuffer.</p>
+
+        <p>Other example extensions of Tool such as an image stamp and localized filter can be seen within the Tool files of the libphoto source</p>
+    </div>
+
+    <div class = "footer">
+        <span class="copyright">&copy; 2015, CSCI 3081</span>
+    </div>
+he
+
+</body>
+</html>

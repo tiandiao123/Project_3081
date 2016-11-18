@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+
+
+<html>
+<head>
+	<meta charset = "utf-8">
+	<title> Getting Started with FlashPhoto </title>
+	<link class = "page" rel="stylesheet" type="text/css" href="../css/stylesheet.css">
+
+</head>
+<body>
+
+
+	<div class="content">
+		<nav>
+			<a href="../index.html" class = "page"> Home </a> |
+			<a href="index.html" class = "page"> Users </a> |
+			<a href="../developers/index.html" class = "page"> Developers </a>
+		</nav>
+	</div>
+
+	<div class = "content">
+		<h1>Getting Started with FlashPhoto</h1>
+        <p style="font-size: 125%">FlashPhoto is a photo editing program with a few basic features. The most important features of FlashPhoto, and the ones that this tutorial is concerned with, are the various brushes, tools, and filters that can be applied to the canvas.</p>
+        <img src="../img/flashphoto_interface.jpeg" alt="Mountain View" style="width:500px;height:403px;" align="middle">
+        <p style="font-size: 125%">There are 7 different tools in FlashPhoto, each with a unique size, shape, and coloring method; while these three parameters are fixed for most tools, the color of a few of these can be changed using the color menu. The color is specified by entering the amount for each of the color channels (red/green/blue) as  decimal values between 0 and 1. Each of the tools available is listed below, along with some basic information about how it can be used.</p>
+        <ul style="font-size: 125%">
+          <li type="disc">The Pen is a basic drawing tool; it applies a single dot if the user clicks the canvas once, and it applies a solid, fine line if the user clicks and drags the mouse across the canvas. The Pen’s color can be changed as desired.</li>
+          <img src="../img/pentool.png" alt="Mountain View" style="width:304px;height:228px;">
+          <li type="disc">The Spray Can is a brush that applies a digital spray of paint to a small, concentrated area of the canvas. If the user just clicks on the canvas with the Spray Can, a single circular spray of paint will be applied. If the user clicks and drags the tool across the canvas, a line of sprayed paint will be applied to the canvas. Furthermore, a user can make the spray thicker by repeatedly applying the Spray Can to the same area. Just as with the pen, the color of the Spray Can can be changed as desired.</li>
+          <img src="../img/spray.png" alt="Mountain View" style="width:304px;height:228px;">
+          <li type="disc">The Calligraphy Pen is similar to the standard Pen tool in that it applies a solid mark to the canvas, but it differs from the Pen tool in that it applies to a much bigger area. The Calligraphy Pen is shaped like a large rectangle, and just like the pen will apply once if the user merely clicks on the canvas, but will apply in a line if the user clicks and drags the tool. The Caligraphy Pen’s color can be changed using the color menu.</li>
+          <img src="../img/calligraphy.png" alt="Mountain View" style="width:304px;height:228px;">
+          <li type="disc">The Highlighter is shaped the exact same as the Calligraphy Pen (a large rectangle), but it is different in the way its color is applied to the canvas. The Highlighter tool, when applied, will apply its color lightly to the canvas, so that what’s underneath will show through the color of the Highlighter, just as a real highlighter would. Just as with the previous tools mentioned, the color of the highlighter can be changed using the color menu.</li>
+          <img src="../img/highlighter.png" alt="Mountain View" style="width:304px;height:228px;">
+          <li type="disc">The Eraser is true to its name: it erases everything in the area it is applied to and restores the color to the original canvas background. The Eraser will remove everything in its path, including colors painted using other tools and images loaded to the canvas. Unlike the tools above, the eraser’s color cannot be changed, since it always restores color to the canvas background.</li>
+          <img src="../img/eraser.png" alt="Mountain View" style="width:304px;height:228px;">
+          <li type="disc">The Stamp tool is unique in that its size can vary; it will always be the size of whatever image is loaded in. To load a new stamp, the user must select an image using the Image I/O Menu, then click the “Load stamp” button. Once an image has been loaded to the Stamp, the user can apply the stamp anywhere by merely clicking on the canvas. The stamp will always apply with the center of the image located where the user clicks. There is no strict limit on how large a stamp image can be, but if it is too large the image may not be entirely visible on the canvas. The color of a stamp cannot be changed, since its colors are specified by the image that is loaded into it.</li>
+          <img src="../img/stamptool.png" alt="Mountain View" style="width:304px;height:228px;">
+          <li type="disc">-	The Blur tool produces the same effect as the blur filter (more on that below), but only to a small, specified area of the canvas. The Blur tool is just like the eraser in that there are no parameters you can change; it merely works as is. To apply blur to a small area (to remove a blemish from a face, for instance), the user must simply select the Blur too and click the desired area of the canvas. For more aggressive blurring, the user can repeatedly apply the blur tool or click and drag the mouse to blur a larger area.</li>
+        </ul>
+        <p style="font-size: 125%">In addition to the above tools, FlashPhoto provides the user with 10 different image filters that can be applied to the whole canvas. Some of these filters have 1 or more parameters that must be specified, while others require no parameters at all. To apply a filter, simply set the parameters associated with filter to the desired values and click the filter’s “apply” button. Each of the filters available in FlashPhoto is listed below.</p>
+        <ul style="font-size: 125%">
+            <li type="disc">The blur filter, which applies a basic blurring effect to the image, takes one parameter: the blur amount, which is an integer between 0 and 20. The higher the value specified, the more blurry the image will be. At large values (>10), the blur filter can take a fair amount of time, so the user will need to be patient if they set the blur value to be very high.</li>
+            <img src="../img/blur.png" alt="Mountain View" style="width:690px;height:228px;">
+            <li type="disc">The motion blur filter, which simulates real-motion blur, takes two parameters: the blur amount (an integer between 0 and 100) and the blur direction (specifies the horizontal, vertical, or diagonal orientation of the motion blur). Just as with the regular blur filter, the larger the blur amount, the more blurry the image will be.</li>
+            <img src="../img/motionblur.png" alt="Mountain View" style="width:690px;height:228px;">
+            <li type="disc">The sharpen filter is essentially the opposite of blur; it sharpens the image rather than blurring it. This filter takes one parameter: the sharpen amount, which is an integer between 0 and 100. Just as with the blur tools, the larger the value of the integer, the more pronounced the effect.</li>
+            <img src="../img/sharpen.png" alt="Mountain View" style="width:690px;height:228px;">
+            <li type="disc">The edge detection filter takes no parameters; it is simply applied. This filter will detect and make prominent any edges in the image.</li>
+            <img src="../img/edgedetect.png" alt="Mountain View" style="width:300px;height:228px;">
+            <li type="disc">The threshold filter takes one parameter: a decimal number between 0 and 1. This number specifies the cutoff value, or threshold. For each of the 3 color channels, if a pixel’s color value is below the threshold, it will be set to 0; otherwise it will be set to 1.</li>
+            <img src="../img/thresh.png" alt="Mountain View" style="width:690px;height:228px;">
+            <li type="disc">The saturation filter takes one parameter: the saturation amount, which is decimal number between -10 and 10. Based on this value, the saturation filter will change the intensity of the image’s color. Some key values are outline here:
+                <ul>
+                    <li type="circle">0: all color will be removed and the user will be left with a grayscale image</li>
+                    <li type="circle">1: the image will be unchanged and the saturation will stay the same</li>
+                    <li type="circle">>1: the image’s colors will be more vibrant and pronounced</li>
+                    <li type="circle">-1: the image’s colors will be reversed, essentially producing a polarized copy</li>
+                </ul>
+            </li>
+            <img src="../img/saturation.png" alt="Mountain View" style="width:690px;height:228px;">
+            <li type="disc">The color channel filter takes three parameters: a decimal number between 0 and 10 for each color channel. Based on the value for each color channel, this filter will make certain colors stronger (value >1) or weaker (value <1).</li>
+            <img src="../img/adjustrgb.png" alt="Mountain View" style="width:690px;height:228px;">
+            <li type="disc">The quantize filter, which separates the image colors into distinct “bins”, takes one parameter: the number of “bins” to separate colors into, which is an integer between 2 and 256. The lower the number of bins, the fewer the colors that are present in the image. Quantize reduces the color quality of the image as desired by the user.</li>
+            <img src="../img/quantize.png" alt="Mountain View" style="width:690px;height:228px;">
+            <li type="disc">The sepia filter takes no parameters; it merely applies a pleasant sepia effect to the image.</li>
+            <li type="disc">The vignette filter takes one parameter: a decimal value between 0 and 1, which specifies the intensity of the vignette that is applied to the image.</li>
+        </ul>
+
+	</div>
+
+	<div class = "footer">
+		<!-- You can change the copyright! -->
+		<span class="copyright">&copy; 2015, CSCI 3081 Guru</span>
+	</div>
+
+
+</body>
+</html>

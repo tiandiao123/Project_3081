@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+
+
+<html>
+<head>
+	<meta charset = "utf-8">
+	<title> libphoto - Developer Information </title>
+	<link class = "page" rel="stylesheet" type="text/css" href="../css/stylesheet.css">
+
+</head>
+<body>
+
+
+	<div class="content">
+		<nav>
+			<a href="../index.html" class = "page">Home</a> |
+			<a href="../users/index.html" class = "page">Users</a> |
+			<span class = "page">Developers</span>
+		</nav>
+	</div>
+
+	<div class = "content">
+		<h1>Developer Information</h1>
+
+		<h2>Overview</h2>
+		<p><b>libphoto</b> is a library designed for creating graphic editing applications.</p>
+		<p>Features include:</p>
+		<ul>
+			<li>Image file loading and saving</li>
+			<li>C++ GLUI interface class for basic gui implementation</li>
+			<li>Pixel representation object</li>
+			<li>PixelBuffer for holding a canvas of 2D array of pixels</li>
+			<li>Image filter handling objects and algorithms</li>
+			<li>Painting tool framework</li>
+			<li>Undo/redo history data structure</li>
+		</ul>
+
+		<p>It depends on libglui for graphical interface and libpng + libjpeg for image loading and saving</p>
+
+		<p>Also included in this release are two example applications FlashPhoto and Mia. These applications setup a GUI (or command line handler for Mia) and create the proper instances of libphoto classes for all functionality</p>
+
+		<img src="../img/liboverview.jpg" alt="Overview of library dependencies" align="middle"> </img>
+
+		<h3>FlashPhoto</h3>
+		<p>FlashPhoto is a basic photo editing application that supports many drawing tools (e.g. spray can, pen, highlighter) as well as image-wide filters (e.g. sepia tone, blur, sharpen, saturation adjustment). It supports basic features expected from a photo editor such as undo/redo, foreground color adjustment, PNG and JPEG saving/loading, etc.</p>
+
+		<h3>Mia</h3>
+        <p>Mia is a basic medical imaging application that supports image loading/saving (JPEG and PNG formats), annotation (using a specialized marker and a red pen), and a small set of filters that are useful for medical images (blur, quantize, etc.). Mia also supports undo/redo functionality; loading, saving, and cycling through a stack of images (useful for CT scans in particular); and a handy command line interface that can be used to apply filters, copy images, and compare images to see if they're identical. </p>
+
+        <h2>libphoto Class Overview</h2>
+
+        <p>A brief overview of the classes contained in libphoto. See the resources below for more information and details</p>
+
+        <img src="../img/classdiag.jpg" alt="Overview of library dependencies" align="middle"> </img>
+
+		<h2>Contributing</h2>
+
+		<p>For details on the currently implemented classes, see the Doxygen generated <a class = "link" href="../doxygen/html/hierarchy.html">documentation</a>. Please also review the <a class = "link" href="styleguide.html">code design guide</a> before submitting contributions to ensure the code meets the library standards.</p>
+
+		<p>Several tutorials have been created to demonstrate the basics of common contributions and extensions</p>
+		<ul>
+			<li><a class = "link" href="tut_createtool.html">Creating a tool</a></li>
+			<li><a class = "link" href="tut_addtool.html">Adding new tool types</a></li>
+			<li><a class = "link" href="tut_addfilter.html">Adding new filters</a></li>
+		</ul>
+
+		<h2>Resources</h2>
+		<ul>
+			<li><a class = "link" href="../doxygen/html/hierarchy.html">Documentation</a></li>
+			<li><a class = "link" href="styleguide.html">Design and Coding Style Guide</a></li>
+            <li><a class = "link" href="blog-seele038.html">Programmer's Blog - Logan Seeley</a></li>
+            <li><a class = "link" href="blog-adkin099.html">Programmer's Blog - Michael Adkins</a></li>
+            <li><a class = "link" href="lixx3527_blogentry.html">Programmer's Blog - Cuiqing Li</a></li>
+		</ul>
+
+
+	</div>
+
+	<div class = "footer">
+		<span class="copyright">&copy; 2015, CSCI 3081</span>
+	</div>
+
+
+</body>
+</html>

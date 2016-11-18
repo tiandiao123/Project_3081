@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+
+
+<html>
+<head>
+	<meta charset = "utf-8">
+	<title> Converting and Segmenting a CT Scan Using Mia </title>
+	<link class = "page" rel="stylesheet" type="text/css" href="../css/stylesheet.css">
+
+</head>
+<body>
+
+
+	<div class="content">
+		<nav>
+			<a href="../index.html" class = "page"> Home </a> |
+			<a href="index.html" class = "page"> Users </a> |
+			<a href="../developers/index.html" class = "page"> Developers </a>
+		</nav>
+	</div>
+
+	<div class = "content">
+		<h1>Converting and Segmenting a CT Scan Using Mia</h1>
+            <p style="font-size: 125%">This tutorial discusses how a user can convert and segment a CT scan into 4 tissue types using the Mia application; in particular, it will demonstrate how to complete this using Mia’s command line interface. In order for Mia to be able to read the CT scan, the scan must be stored as a “stack” of numbered images sharing the same base name in a single directory; for instance, a valid CT scan could be a directory called “scan” that contains the files “file00.jpg”, “file01.jpg”, “file02.jpg”, etc. If these images are stored in different directories, the scan will not be properly read. Moreover, if the files have different base names (e.g. “file01.jpg” and “scan01.jpg”), the behavior of Mia can be a little unpredictable, so the user should keep the base names the same for the scan to work properly.</p>
+            <p style="font-size: 125%">To use the command line interface of Mia, the user will need to open a terminal and navigate to the directory in which Mia is located (this can be done by typing <code>cd *mia-path*</code>, where *mia-path* is the path to the directory in which Mia is located). Once the user is in the Mia directory, they’re ready to use its command line interface.</p>
+            <p style="font-size: 125%">The first step in converting and segmenting a CT scan is to blur the images slightly so as to reduce the noise in the scan. The second step is to then quantize the images into 4 segments, thereby showing the 4 tissue types. The third and final step is to save the images into a new directory where they can be viewed and analyzed later. With the Mia command line interface, all three of these steps can be easily accomplished at once, since Mia allows for multiple filters to be applied with each command sent to the application. To accomplish this converting and segmenting, the user can simply enter the following command in the terminal: <code>./Mia *source-path* -blur 2 -quantize 4 *destination-path*</code>, where *source-path* is the path to the directory where the original scan is located and *destination-path* is the path to the directory where the converted and segmented scan will be saved. For instance, if the source images are located in a directory called “source_scan” in the Mia directory, then the scan can be segmented and saved to a new directory called “segmented_scan” using the following command: <code>./Mia source_scan -blur 2 -quantize 4 segmented_scan</code></p>
+	</div>
+
+	<div class = "footer">
+		<!-- You can change the copyright! -->
+		<span class="copyright">&copy; 2015, CSCI 3081 Guru</span>
+	</div>
+
+
+</body>
+</html>

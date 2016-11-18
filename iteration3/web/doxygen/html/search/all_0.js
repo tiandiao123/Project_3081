@@ -1,0 +1,8 @@
+var searchData=
+[
+  ['adjustpixelrgb',['adjustPixelRGB',['../namespace_pixel_filter_algorithm.html#a2e86bacfb545398c571edd68c0770e20',1,'PixelFilterAlgorithm']]],
+  ['adjustpixelsaturation',['adjustPixelSaturation',['../namespace_pixel_filter_algorithm.html#a956451fa2fe55b0f1726689787e7be2a',1,'PixelFilterAlgorithm']]],
+  ['adjustpixeltothreshold',['adjustPixelToThreshold',['../namespace_pixel_filter_algorithm.html#ab824a0bdb37916b05e12c3451d31cfb5',1,'PixelFilterAlgorithm']]],
+  ['allocate',['allocate',['../class_kernel_filter_algorithm_1_1_kernel_filter.html#ab9a28fea234bd51acf4403825d18dc46',1,'KernelFilterAlgorithm::KernelFilter::allocate()'],['../class_mask.html#a06ebc22ff8d85e9913b151d82ca99e50',1,'Mask::allocate()']]],
+  ['apply',['apply',['../class_filter.html#a98eb90593dbaab614d8f770f0eb9557e',1,'Filter::apply()'],['../class_position_independent_filter.html#a647344705c45f77ef8313ad3d76fbf1a',1,'PositionIndependentFilter::apply()'],['../class_convolution_based_filter.html#a4aa841a8549525b992a6c419167f1bcd',1,'ConvolutionBasedFilter::apply()'],['../class_image_mask_based_filter.html#acf989aa596959fb44571613dcf843cf9',1,'ImageMaskBasedFilter::apply()'],['../class_filter_handler.html#aea7fe83e8746f572e7684fe2f690abc4',1,'FilterHandler::apply()'],['../class_tool.html#adcc8a268dbc77cb98c6d9a3095403b89',1,'Tool::apply()'],['../class_mask_based_tool.html#a45d3af85f0fa74cad02b184207b5725f',1,'MaskBasedTool::apply()'],['../class_sample_based_tool.html#afd2c0d39471ba3ab561b50b1f5e7bef4',1,'SampleBasedTool::apply()'],['../class_image_based_tool.html#a905defcfc662f05a395bbff7d4658ba9',1,'ImageBasedTool::apply()'],['../class_filter_based_tool.html#a3e3180abf36587b7483cfd8096a18bbe',1,'FilterBasedTool::apply()']]]
+];

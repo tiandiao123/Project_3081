@@ -1,0 +1,59 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>Untitled Document.md</title><style></style></head><body id="preview">
+<pre><code><span class="hljs-keyword">void</span> MaskBasedTool::apply(<span class="hljs-keyword">int</span> x, <span class="hljs-keyword">int</span> y, PixelBuffer* buf, ColorData fg) {
+    <span class="hljs-comment">// Grab important mask information</span>
+    <span class="hljs-keyword">float</span> **mask = m_mask-&gt;OpacityData();
+    <span class="hljs-keyword">int</span> size = m_mask-&gt;getSize();
+    <span class="hljs-comment">// Find the upper left corner of area to apply to</span>
+    <span class="hljs-keyword">int</span> app_x = x - size/<span class="hljs-number">2</span>;
+    <span class="hljs-keyword">int</span> app_y = y + size/<span class="hljs-number">2</span>;
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; size; i++)
+    {
+        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> j = <span class="hljs-number">0</span>; j &lt; size; j++)
+        {
+            <span class="hljs-comment">// Find the real coordinates, fixing y inversion</span>
+            <span class="hljs-keyword">int</span> x = app_x + i;
+            <span class="hljs-keyword">int</span> y = buf-&gt;getHeight() - app_y + j;
+            <span class="hljs-comment">// Update pixel if applicable</span>
+            <span class="hljs-keyword">if</span> (mask[i][j] &gt; <span class="hljs-number">1.0e-6</span> &amp;&amp; checkBounds(x, y, buf)) {
+                ColorData col_new = blendColor(buf-&gt;getPixel(x, y), fg, mask[i][j], m_blendmode);
+                buf-&gt;setPixel(x, y, col_new);
+            }
+        }
+    }
+}
+</code></pre>
+<p>This is one place of the codes which I made cobtributions to the final version of our project!</p>
+<p>Purpose: The codes above are used to set ColorData of the specific Pixel(the area around our mouse) on the cancas based on the values of mask of the tool we are using and the position of the mouse. Also, the codes above are used to adjust the colordata we passed from my original function!</p>
+<p>How to accomplish the targets: Firstly, I need to use OpacityData() function to get mask of the tool we are using. Then, I assigned the value of the mask of the tool to an 2D float array(or a double float pointer) mask, then we need to use this mask to get actual value of the tool’s mask. Then, I set two int variable, one is called app_x and another one is called app_y. I let app_x be x-size/2 and app_y be y+size/2, where size is the width of the mask array and the (x,y) is the position of the mouse. If so, we can make sure (app_x, app_y) is the left corner of the area of the tool’s mask on the canvas! Now, I use two for loops to handle the ColorData Setting on the Canvas! Firstly, the first for loop which is for(int i=0;i&lt;size;i++) is basically used to go through the 2D mask arrays horizontally. As for any fixed value i, I used another for loop to go through every elements in the i-th column of the mask 2D array. If so, I set another for loop (for (int j=0;j&lt;size;j++) to handle the problem! As for every specific value i and j, I used (app_x+i,buf-&gt;getHeight()-app_y+j) to get the specific pixel postion we are going to work on, which means that position is the current target position of the canase on the screen. Then, aftr getting position of the target pixel on the canvas, I firstly check whether the corresponding mask value mask[i][j] is larger than 0, and also I checked whether the current position we are targeting exceeds the area of the canvas! Thus, I used “if (mask[i][j]&gt;1.0e-6 &amp;&amp; checkBounds(x,y,buf))” to accomplish the purpose!   After checking it has no problems, I set ColorData col_new which is used to receive the ColorData function blendColor() gets! blendColor function is used to get actual color we need to get based on influence of the mask of the tool we are using and tool’s type characteristics(SOLID or DECAY). After getting the actual ColorData we need to use, then I use buf-&gt;setPixel(x,y,col_new) to set the Color of the pizxel we are targeting. Repeat the procedures for size*size times, we can finally finish our task (set the all the pixels’ DataColor the Mask array corresponds to)! Thus, I think I can accomplish the task described above in the purpose section!</p>
+<p>Coding Style: As for the coding style, I added many comments beside the actual codes in this program so that it is more understandable for readers! Also, if you check the indent problems in the codes above, you will find that the codes are very neat, and I have made sure the indent will not be a problem so that readers won’t be confused!</p>
+<pre><code><span class="hljs-keyword">void</span> SampleBasedTool::apply(<span class="hljs-keyword">int</span> x, <span class="hljs-keyword">int</span> y, PixelBuffer* buf, ColorData fg) {
+    <span class="hljs-comment">// Find the top left corner of application and loop</span>
+    <span class="hljs-keyword">int</span> app_x = x - (m_size)/<span class="hljs-number">2</span>;
+    <span class="hljs-keyword">int</span> app_y = y + (m_size)/<span class="hljs-number">2</span>;
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; m_size; i++)
+    {
+        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> j = <span class="hljs-number">0</span>; j &lt; m_size; j++)
+        {
+            <span class="hljs-comment">// Find the real coordinates, fixing y inversion</span>
+            <span class="hljs-keyword">int</span> x = app_x + i;
+            <span class="hljs-keyword">int</span> y = buf-&gt;getHeight() - app_y + j;
+            <span class="hljs-comment">// Sample from the offset</span>
+            <span class="hljs-keyword">int</span> x_off, y_off;
+            x_off = x + m_xoffset;
+            y_off = y + m_yoffset;
+            <span class="hljs-comment">// Update pixel if applicable</span>
+            <span class="hljs-keyword">if</span> (checkBounds(x_off, y_off, buf) &amp;&amp; checkBounds(x, y, buf)) {
+                ColorData col_new = blendColor(buf-&gt;getPixel(i, j), buf-&gt;getPixel(x_off, y_off), m_blend_opac, PHOTONFLUXBLEND);
+                buf-&gt;setPixel(x, y, col_new);
+            }
+        }
+    }
+}
+</code></pre>
+<p>The codes have been modified by my partner, so it has changed a liitle, but I made contributions to the codes originally.  My partner changed my codes so that he can use it to build a special tool which is called clone tool in our program!</p>
+<p>Purpose: The codes are used to finish the same target as the first program I showed in this html file, which is used to set the pixel’s Colordata on the canvas at some specific places! Over here, it is the area around the mouse! The only difference is that we can use this apply function to create a special tool’s mask so that we can finish our clone tool!</p>
+<p>How to accomplish the purpose: Since the codes are generally the same as the previous one, so I can only talked about the difference in the code above! The only difference is that we set a x_off and y_off in the program so that we can get access to some place’s pixel value instead of the pixel underneath of my mouse! If so, when we set pixel’s colordata, we can modify the values of x_off and y_off so that we can get access to other places’ pixel and modify their ColorData!</p>
+<p>Coding Style: As for coding style, I think basically I used two for loops to finish the task, and running time of the algorithms is O(n^2), which is not very efficient! However, it is easier to handle it and easier to finish the task if we just want to satisfy the setting of the Color in the pixel of the canvas! Also, I added some comments beside my codes in the program so that readers can easily undersatnd! Finally, I make sure indenting my codes so that it will not confuse readers, so that’s why I make my programs become more neat in the screen!</p>
+<p>Addtional Work: Originally, I also made contributions to the implementation of MoveDragged() function, and you can check on the Github to see previous version! In order to make our codes more efficiently, my partner modified my implementation of the MoveDragged() function so that we can make creating tools easier and simpler in the future! Also, originally, I created pen class, eraser class and other kinds of tool classes which extends Mask Class( my partner finished it) to set specific tool, but in order to make coding more efficient and creating tools more conveniently, we gave up my specific tool classes I created before! Because we want to make creating tool more conveniently, so we create a general class whch is tool class to replace those specific tool classes! You can check how we build our project in previous version and see how I make contributions to the project originally! Thank you for your reading!</p>
+
+</body></html>

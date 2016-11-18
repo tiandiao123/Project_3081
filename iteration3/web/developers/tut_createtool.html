@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+
+
+<html>
+<head>
+    <meta charset = "utf-8">
+    <title> libphoto - Tutorial - Creating a tool </title>
+    <link class = "page" rel="stylesheet" type="text/css" href="../css/stylesheet.css">
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+
+</head>
+<body>
+
+
+    <div class="content">
+        <nav>
+            <a href="../index.html" class = "page">Home</a> |
+            <a href="../users/index.html" class = "page">Users</a> |
+            <a href="index.html" class = "page">Developers</a>
+        </nav>
+    </div>
+
+    <div class = "content">
+        <h1>Creating a new tool</h1>
+        <p>libphoto does not define any tools by default but rather gives a set of tool classes that all inherit from a parent Tool. The nature of these subclasses allows easy creation of Tools in near plain language.</p>
+
+        <p>For example, here is the creation of a pen using MaskBasedTool. This class' constructor requires a Mask object and a blend type to use when applying the tool. The Mask for a pen is circular and solid, so a CircularMask is created with a size of 3 pixels and given settings for generation of the mask such that the entire mask is the same value (SOLID) and the value has no transparency (1.0). The CircularMask object is casted to the generic Mask type before being passed into MaskBasedTool since the class assumes all Masks are square. The blend type is specified by an enumeration and defines the algorithm to be used when combining the foreground color applied by the tool with the preexisting pixel color. BASICBLEND is fast and will suffice for most tools. For more details on blend types and the algorithm implementations, see the documentation and source.</p>
+        <pre class="prettyprint">
+MaskBasedTool *pen;
+pen = new MaskBasedTool (
+            dynamic_cast<Mask*> (
+                new CircularMask(3, MaskOpacitySettings(SOLID, 1.0))
+            ),
+            BASICBLEND
+        );
+        </pre>
+
+        <p>Next, we will examine the creation of a spray can tool. The syntax is very similar to the creation of the pen, but the settings passed to the constructor are changed. The size is significantly larger at 41 pixels, but much of it is transparent with an initial opacity of 0.2 at the center that decays linearly by 0.01 per pixel to the outside of the circle. Additionally, a different blending algorithm is used that's slightly more computationally intensive and returns a 'truer' color blend.</p>
+        <pre class="prettyprint">
+MaskBasedTool *spraycan;
+spraycan = new MaskBasedTool (
+                dynamic_cast<Mask*> (
+                    new CircularMask(41,MaskOpacitySettings(LINEARDECAY, 0.2, 0.01))
+                ),
+                PHOTONFLUXBLEND
+            );
+        </pre>
+
+        <p>Finally, a rectangular highlighter is created. To demonstrate placing the tools in an array, an array of Tools is declared and the MaskBasedTool is casted to a generic Tool type. The mask is rectangular instead of circular with a size of 5x15 pixels and a constant (SOLID) mask with an opacity of 0.8. The luminance blend is used which creates a more realistic highlighter by allowing darker colors to show through lighter colors when blended.</p>
+        <pre class="prettyprint">
+Tool* tool[10];
+tool[4] =
+    dynamic_cast<Tool*> (
+        new MaskBasedTool (
+            dynamic_cast<Mask*> (
+                new RectangularMask(5, 15, MaskOpacitySettings(SOLID, 0.8))
+            ),
+            LUMINANCEBLEND
+        )
+    );
+        </pre>
+
+        <p>Using the provided framework, a vast variety of tools can be created. Additionally, new Tool subclasses can be added to create more complex tool types such as a stamp tool or clone tool. See <a href="tut_addtool.html" class="link">adding a tool type</a> for details. Additional examples of creating tools as well as techniques for dynamically applying tools can be found in the FlashPhoto source.</p>
+    </div>
+
+    <div class = "footer">
+        <span class="copyright">&copy; 2015, CSCI 3081</span>
+    </div>
+
+
+</body>
+</html>

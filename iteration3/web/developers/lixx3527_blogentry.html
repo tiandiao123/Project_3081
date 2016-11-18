@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+
+
+<html>
+<head>
+    <meta charset = "utf-8">
+    <title> Programmer's Blog - Cuiqing Li </title>
+    <link class = "page" rel="stylesheet" type="text/css" href="../css/stylesheet.css">
+
+</head>
+<body>
+
+
+    <div class="content">
+        <nav>
+            <a href="../index.html" class = "page">Home</a> |
+            <a href="../users/index.html" class = "page">Users</a> |
+            <a href="index.html" class = "page">Developers</a>
+        </nav>
+    </div>
+
+    <div class = "content">
+        <h1>Programmer's Blog - Cuiqing Li</h1>
+        <pre><code> <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> ((stat(argv[arg_i],&amp;st_buf)==<span class="hljs-number">0</span>)&amp;&amp;  S_ISDIR(st_buf.st_mode)) {
+         <span class="hljs-comment">// Handle directory</span>
+         DIR* FD;
+
+         <span class="hljs-built_in">std</span>::<span class="hljs-built_in">cout</span>&lt;&lt;<span class="hljs-string">"first one"</span>&lt;&lt;endl;
+         <span class="hljs-keyword">struct</span> dirent* in_file;
+         <span class="hljs-keyword">if</span> (<span class="hljs-literal">NULL</span> == (FD = opendir (argv[<span class="hljs-number">1</span>])))
+         {
+              <span class="hljs-built_in">cout</span>&lt;&lt;<span class="hljs-string">"failed to open dir"</span>&lt;&lt;endl;
+              quitProgram();
+         }
+
+
+         <span class="hljs-keyword">while</span> ((in_file = readdir(FD))!=<span class="hljs-literal">NULL</span>){
+             <span class="hljs-comment">//std::cout&lt;&lt;"second one"&lt;&lt;endl;</span>
+             arg_i=<span class="hljs-number">1</span>;
+             <span class="hljs-built_in">std</span>::<span class="hljs-function"><span class="hljs-built_in">string</span> <span class="hljs-title">strimagefile</span><span class="hljs-params">(in_file-&gt;d_name)</span></span>;
+             <span class="hljs-built_in">std</span>::<span class="hljs-built_in">cout</span>&lt;&lt;strimagefile&lt;&lt;endl;
+
+             <span class="hljs-keyword">if</span> (isValidImageFileName(strimagefile)){
+
+                <span class="hljs-keyword">const</span> <span class="hljs-keyword">int</span> num=argc;
+                <span class="hljs-keyword">char</span> file1[<span class="hljs-number">50</span>]=<span class="hljs-string">""</span>;
+                <span class="hljs-built_in">strcat</span>(file1,argv[arg_i]);
+                <span class="hljs-built_in">strcat</span>(file1,<span class="hljs-string">"/"</span>);
+                <span class="hljs-built_in">strcat</span>(file1,strimagefile.c_str());
+                imageHandler-&gt;loadImage(file1, buf);
+                ++arg_i;
+                <span class="hljs-keyword">while</span> (arg_i&lt;argc-<span class="hljs-number">1</span>){
+                applyNextFilter(argv, arg_i);
+                }
+
+                <span class="hljs-built_in">std</span>::<span class="hljs-function"><span class="hljs-built_in">string</span> <span class="hljs-title">strtemp</span><span class="hljs-params">(argv[argc-<span class="hljs-number">1</span>])</span></span>;
+                save=strtemp+<span class="hljs-string">"/"</span>+strimagefile;
+
+                imageHandler-&gt;saveImage(save, buf);
+              }
+          }
+      }
+</code></pre>
+        <p>This is one place of the codes which I made cobtributions to the final version of our
+project!</p>
+<p>Purpose: These codes are used to catch all the image files from a directory, and then use some tools or filters to apply those images one by one. Finally, the program above make all the images be saved in another directory. Typically, it is sort of like a 3-D medical image processing procedures. The same thing is that we need to use different filters to apply those images so that stack all the images into another directory.</p>
+<p>How to accomplish the purpose: First of all, I need to use #include &lt;sys/stat.h&gt; libarary so that I can apply stat functions to check whether the argument the program receive is a name of a directory. If it is, then the program enter into that else if conditions so that it can execute the following codes. Then I need to try to open that file if that file is a directory. If it cannot open that diretory, we need to force the program to stop. If it is a directory, then we can just continue to execute next codes. Next, the program will try to read all the files in that opened directory one by one, and check whether that file is an image file or not. In this case, the program only check whether that is a png file or jpeg/jpg file.If it is, then the program will use imagehandler to laod that image into the pixelbuffer. After that, I use a while loop to check and decide how to apply filters and tools to that loaded image so that the program can change image display. Then, after applyng all the tools and filters we need, the program will use saveimagetofile() function to save that changed image canvas to another directory(use either png or jpeg/jpg file). Thus, these are the general procedures how I implement the codes above to accomplish all the tasks we need.</p>
+<p>Coding Style: I use some comments and indentation so that the codes are more readable and understandable. Also, as for running time for these codes, I think it is really hard to say. Because I use many other kinds of functions in these codes, I am not sure how is exactly thr running time of this algorithm. However, since it need to save and load images, and the saving and load images need to copy all the pixels in one image into another another image file. Thus, it depends on the image size and the number of all the image files. Also, since it is a graphical programming, so it also depends on the computer system speed in this case. Thus, these are basic coding styles in this program</p>
+
+
+    </div>
+
+    <div class = "footer">
+        <span class="copyright">&copy; 2015, CSCI 3081</span>
+    </div>
+
+
+</body>
+</html>
